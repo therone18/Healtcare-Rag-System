@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from routers import upload
+from routers import upload, embed
 
 app = FastAPI()
 
-app.include_router(upload.router, prefix="/api")
+app.include_router(embed.router, prefix="/api")
