@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import query, embed  # ✅ make sure this exists
+from routers import query, embed, upload
 
 app = FastAPI()
 
@@ -11,6 +11,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ Include both routers
 app.include_router(query.router, prefix="/api")
 app.include_router(embed.router, prefix="/api")
+app.include_router(upload.router, prefix="/api")

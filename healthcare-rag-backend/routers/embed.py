@@ -1,21 +1,28 @@
-from fastapi import APIRouter, HTTPException
-from services.embedding_service import embed_all_documents
-from typing import Dict
+from fastapi import APIRouter
+from db.mongo import collection
+from services.chunking_service import split_text_into_chunks
+from vector.chroma_store import get_chroma
 
 router = APIRouter()
 
-@router.post("/embed/", response_model=Dict[str, str])
-def run_embedding():
-    """
-    Triggers the document embedding process into the Chroma vectorstore.
-    """
-    try:
-        result = embed_all_documents()
+@router.post("/embed/")
+def embed_all_documents():
+    chroma = get_chroma()
 
-        if not result or result.get("status") != "done":
-            raise HTTPException(status_code=500, detail="Embedding failed.")
+    # Get all documents from MongoDB
+    docs = list(collection.find({}))
+    added = 0
 
-        return result
+    for doc in docs:
+        parsed = doc.get("parsed_json", {})
+        # Convert dict to plain string for embedding
+        text = "\n".join(f"{k.replace('_', ' ').title()}: {v if not isinstance(v, list) else ', '.join(v)}" for k, v in parsed.items())
+        chunks = split_text_into_chunks(text)
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Embedding error: {str(e)}")
+        chroma.add_texts(
+            texts=chunks,
+            metadatas=[{"source_doc": doc["document_id"], "chunk_index": i} for i in range(len(chunks))]
+        )
+        added += len(chunks)
+
+    return {"status": "success", "chunks_added": added}
