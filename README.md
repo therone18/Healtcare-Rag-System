@@ -1,121 +1,151 @@
 
-# Healthcare Document RAG System
+# Healthcare RAG System (Retrieval-Augmented Generation)
 
-A technical interview project to demonstrate a working Retrieval-Augmented Generation (RAG) system for healthcare-related document querying using parsed PDFs and large language models (LLMs).
+A local document-based Question Answering system built for healthcare documents. This project uses **LangChain**, **Ollama** (LLM), **IBM DocLing** (or simulated parser), and **Chroma** for vector search. Users can upload patient PDFs, extract structured information, and query patient data in natural language.
 
-Backend: Python (FastAPI)  
-LLM: Ollama + LangChain  
-Parsing: IBM DocLing  
-Database: MongoDB  
-Vector Store: FAISS/Chroma  
-Frontend: Streamlit (or Angular)
-
----
-
-## Project Objectives
-
-- Upload and parse large healthcare PDFs (e.g., nursing notes, OASIS forms)
-- Extract structured JSON using IBM DocLing
-- Chunk and embed document data and store in a vector database
-- Use Ollama and LangChain to implement a secure, on-premise RAG pipeline
-- Provide a chat interface where users can ask natural-language questions about patient data
-
----
-
-## Current Features (Day 1)
-
-### PDF Upload and Parsing
-- Upload single or multiple PDFs via `/api/upload/`
-- Store PDFs locally (or to S3)
-- Parse documents using simulated or real IBM DocLing API
-- Store extracted structured JSON in MongoDB
 
 ---
 
 ## Tech Stack
 
-| Component        | Technology               |
-|------------------|--------------------------|
-| Backend API      | FastAPI (Python)         |
-| File Storage     | Local Disk / Amazon S3   |
-| Document Parsing | IBM DocLing              |
-| Database         | MongoDB                  |
-| Vector Store     | FAISS / Chroma / MongoDB |
-| Embedding Model  | Ollama (e.g., Mistral)   |
-| RAG Framework    | LangChain                |
-| Frontend         | Streamlit / Angular      |
+| Component           | Tech Used                               |
+|---------------------|------------------------------------------|
+| **Backend**         | FastAPI (Python)                         |
+| **Frontend**        | Streamlit or Angular (optional)          |
+| **LLM**             | Mistral (via Ollama)                     |
+| **RAG Framework**   | LangChain                                |
+| **Embeddings**      | HuggingFace `MiniLM`                     |
+| **Vector Store**    | Chroma                                   |
+| **PDF Parser**      | IBM DocLing API *(simulated)*            |
+| **File Storage**    | MongoDB (stores PDFs + parsed JSON)      |
+| **Database**        | MongoDB                                  |
 
 ---
 
-## How to Run
+## Features
 
-1. Clone and Install
-
-    git clone https://github.com/yourname/healthcare-doc-rag.git
-    cd healthcare-doc-rag
-    python -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-
-2. Set Environment Variables
-
-    Create a `.env` file with:
-
-    MONGO_URI=mongodb://localhost:27017
-    DOC_LING_API_KEY=your-docling-key-if-any
-
-3. Run the Server
-
-    uvicorn main:app --reload
-
-4. Test Upload (with curl)
-
-    curl -X POST http://localhost:8000/api/upload/ \
-    -F "files=@/path/to/document1.pdf" \
-    -F "files=@/path/to/document2.pdf"
+- Upload multiple patient PDFs  
+- Auto-parsing via IBM DocLing (simulated with mock data)  
+- Store structured JSON and file data in MongoDB  
+- Text chunking and vector embedding with HuggingFace  
+- RAG: Contextual QA via Mistral (Ollama)  
+- Chat-style interface (Postman or UI frontend)
 
 ---
 
-## Project Structure
+## Local Setup Instructions
 
-    backend/
-    ├── main.py                    # FastAPI entry point
-    ├── routers/
-    │   └── upload.py              # Handles upload endpoints
-    ├── services/
-    │   └── docling_service.py     # IBM DocLing interface (simulated)
-    ├── utils/
-    │   └── storage.py             # Local/S3 file handling
-    ├── db/
-    │   └── mongo.py               # MongoDB integration
-    ├── .env                       # Environment variables
-    └── requirements.txt
+### 1. Clone the Repo
 
----
+```bash
+git clone https://github.com/yourusername/healthcare-rag-system.git
+cd healthcare-rag-system/healthcare-rag-backend
+```
 
-## Sample Use Cases (Planned Final Features)
+### 2. Create Virtual Environment
 
-- "What medications is patient John Doe currently taking?"
-- "Summarize all nursing visits in the last 30 days."
-- "What orders did Dr. Smith sign this month?"
-- "What’s the OASIS SOC assessment result for Jane Doe?"
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
----
+### 3. Install Dependencies
 
-## Upcoming Features
+```bash
+pip install -r requirements.txt
+```
 
-| Feature                    | Status |
-|----------------------------|--------|
-| Document chunking          | Day 2  |
-| Embedding via Ollama       | Day 2  |
-| Vector DB storage          | Day 2  |
-| LangChain RAG chain        | Day 3  |
-| Streamlit chat interface   | Day 4  |
-| Search by patient/date     | Day 5  |
-| Final cleanup and docs     | Day 6  |
+### 4. Configure Environment
+
+Create a `.env` file with:
+
+```env
+MONGO_URI=mongodb://localhost:27017
+```
+
+Make sure MongoDB is running locally.
 
 ---
 
-## License
+## Ollama Setup (LLM)
 
-This project is for demonstration and technical interview purposes only.
+1. [Install Ollama](https://ollama.com/download)
+2. Pull the **Mistral** model:
+
+```bash
+ollama pull mistral
+```
+
+3. Run Ollama locally:
+
+```bash
+ollama run mistral
+```
+
+Backend will connect to this instance at `http://localhost:11434`
+
+---
+
+## Run the Backend API
+
+```bash
+uvicorn main:app --reload
+```
+
+You’ll have access to endpoints like:
+
+- `POST /api/upload/` → Upload PDF files
+- `POST /api/embed/` → Parse + Chunk + Embed documents
+- `POST /api/rag/query` → Ask questions to the model
+
+Use **Postman** or your frontend to send queries.
+https://www.postman.com/aviation-cosmologist-88514797/workspace/public/collection/45790656-cdb4519e-4e48-46ab-9d9d-4e31f7067137?action=share&source=copy-link&creator=45790656
+---
+
+## Sample API Query (Postman)
+
+**POST** `/api/rag/query`
+
+```json
+{
+  "question": "Give me a run down of all the patients"
+}
+```
+
+---
+
+##  Folder Structure
+
+```
+healthcare-rag-backend/
+│
+├── main.py                      # FastAPI entrypoint
+├── services/
+│   ├── rag_service.py
+│   ├── docling_services.py      # Simulated parser
+│   ├── chunking_service.py
+├── vector/
+│   └── chroma_store.py
+├── db/
+│   └── mongo.py
+├── routers/
+│   ├── query.py
+│   ├── embed.py
+│   └── upload.py
+├── utils/
+│   └── storage.py
+├── chroma_db/                   # Vector store (auto-created)
+├── venv/
+└── .env
+```
+
+---
+
+## Known Limitations
+
+- IBM DocLing is mocked. For production, replace with actual DocLing API integration.
+- Ollama must run **locally**; deployment to cloud requires switching to a hosted LLM.
+- No user authentication or access control (for demo simplicity).
+
+---
+
