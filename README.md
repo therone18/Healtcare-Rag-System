@@ -149,3 +149,7 @@ healthcare-rag-backend/
 
 ---
 
+
+Developed for the technical project interview for Strongwill Information Technology Solutions.
+
+*Thank you Strongwill IT Solutions for the opportunity*
