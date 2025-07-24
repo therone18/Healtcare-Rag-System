@@ -8,7 +8,7 @@ langchain
 langchain_chroma
 langchain_huggingface
 langchain_ollama
-fitz
+PyMuPDF
 chromadb
 sentence-transformers
 tiktoken
