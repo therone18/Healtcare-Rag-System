@@ -11,7 +11,7 @@ A local document-based Question Answering system built for healthcare documents.
 | Component           | Tech Used                               |
 |---------------------|------------------------------------------|
 | **Backend**         | FastAPI (Python)                         |
-| **Frontend**        | Streamlit or Angular (optional)          |
+| **Frontend**        | Streamlit                                |
 | **LLM**             | Mistral (via Ollama)                     |
 | **RAG Framework**   | LangChain                                |
 | **Embeddings**      | HuggingFace `MiniLM`                     |
