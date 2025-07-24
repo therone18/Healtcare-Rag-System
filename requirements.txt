@@ -5,9 +5,15 @@ python-dotenv
 requests
 python-multipart
 langchain
+langchain_chroma
+langchain_huggingface
+langchain_ollama
+fitz
 chromadb
 sentence-transformers
 tiktoken
 ollama
 streamlit
 requests
+frontend
+tools
